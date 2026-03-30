@@ -19,30 +19,54 @@ The following objects are my initial design of the UML:
 
 ```mermaid
 classDiagram
+    class Pet {
+        +String name
+        +String breed
+        +int age
+    }
+
+    class TimeSlot {
+        +String start
+        +String end
+        +bool available
+    }
+
+    class Task {
+        +String taskType
+        +Pet pet
+        +int priority
+        +String dueTime
+    }
+
     class Tasks {
         +int numPets
-        +String[] petNames
-        +String[] taskNames
-        +walkPet()
-        +feedPet()
-        +groomPet()
+        +List~Pet~ pets
+        +List~Task~ taskList
+        +walkPet(pet)
+        +feedPet(pet)
+        +groomPet(pet)
     }
 
     class Constraint {
         +String ownerName
-        +String[] timeSchedule
+        +List~TimeSlot~ timeSlots
         +getSchedule()
         +getName()
         +toString()
     }
 
     class TasksPlanner {
-        +String[] taskReasons
         +Tasks tasks
         +Constraint constraint
-        +explainTask()
+        +Dict taskReasons
+        +explainTask(task)
+        +schedule()
     }
 
+    Task --> Pet : belongs to
+    Tasks --> Pet : contains
+    Tasks --> Task : contains
+    Constraint --> TimeSlot : contains
     TasksPlanner --> Tasks : instantiates
     TasksPlanner --> Constraint : instantiates
 ```
@@ -51,7 +75,7 @@ classDiagram
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
-
+Based on the AI agend examination result, I decided to add some new classes such as Pet, TimeSlot, and Task. This is because the previous tasks (Tasks, Constraint, TasksPlanner) are not holding the right attributes or missing the needed objects, such as Pet.
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
