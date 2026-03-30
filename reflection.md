@@ -7,6 +7,46 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+For this program, we need the following three core actions:
+* Track tasks, such as walking, feeding, grooming, and so on.
+* Consider constraints, such as time availability, priority, and so on.
+* Tasks Planner and explain the reason for each task.
+
+The following objects are my initial design of the UML:
+* Tasks Class: it has attributes such as the number of pets, the name of pets, and name of tasks. It has methods such as walkPet(), feedPet(), groomPet(), and so on. 
+* Constraint Class: it has attributes such as the pet owner's name, the pet owner's time schedule, and it has methods such as getSchedule(), getName(), toString().
+* Tasks Planner: it will instantiate the Tasks Class and the Constraint Class and use their methods to build up the plan for the pet owner. It has attributes like the reasons of each task. It has methods such as explainTask().
+
+```mermaid
+classDiagram
+    class Tasks {
+        +int numPets
+        +String[] petNames
+        +String[] taskNames
+        +walkPet()
+        +feedPet()
+        +groomPet()
+    }
+
+    class Constraint {
+        +String ownerName
+        +String[] timeSchedule
+        +getSchedule()
+        +getName()
+        +toString()
+    }
+
+    class TasksPlanner {
+        +String[] taskReasons
+        +Tasks tasks
+        +Constraint constraint
+        +explainTask()
+    }
+
+    TasksPlanner --> Tasks : instantiates
+    TasksPlanner --> Constraint : instantiates
+```
+
 **b. Design changes**
 
 - Did your design change during implementation?
