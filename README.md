@@ -41,3 +41,33 @@ pip install -r requirements.txt
 5. Add tests to verify key behaviors.
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
+
+## Smarter Scheduling
+
+The following features were added to `pawpal_system.py` to make the scheduler more useful and robust for real pet care routines.
+
+### Priority + time-of-day sorting
+
+`Tasks.get_tasks_by_priority()` sorts tasks by two keys: numeric priority first (1 = highest), then by `due_time` in chronological order (`morning → afternoon → evening → anytime`). This prevents a low-priority afternoon task from being scheduled before a same-priority morning task.
+
+### Flexible task filtering
+
+`Tasks.filter_tasks(pet_name, completed)` lets you query the task list by any combination of pet name and completion status. Both parameters are optional, so you can ask for all pending tasks, all tasks for one pet, or completed tasks for a specific pet in one call.
+
+### Recurring tasks
+
+`Task` now has two optional fields: `recurrence` (`"daily"`, `"weekly"`, or `None`) and `due_date` (defaults to today). When `Tasks.complete_task(task)` is called on a recurring task, it marks the original complete and automatically appends a new instance to the task list with the next due date calculated using Python's `timedelta`:
+
+- `"daily"` → `due_date + 1 day`
+- `"weekly"` → `due_date + 7 days`
+
+One-off tasks (no recurrence) return `None` and are simply marked done.
+
+### Conflict detection
+
+Two layers of conflict detection run before the schedule prints, neither of which crashes the program:
+
+- **`Constraint.get_conflicts()`** — detects overlapping available time slots by sorting slots by start time and checking whether any slot's end time exceeds the next slot's start time.
+- **`TasksPlanner.get_conflicts(plan)`** — checks the final scheduled plan for any two tasks assigned to the same slot. Accepts a pre-built plan to avoid running the scheduling algorithm twice.
+
+Warnings are printed above the schedule with a `⚠` prefix so the owner sees the issue immediately while still getting a usable plan.

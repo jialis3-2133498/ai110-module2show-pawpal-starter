@@ -75,6 +75,7 @@ classDiagram
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+
 Based on the AI agend examination result, I decided to add some new classes such as Pet, TimeSlot, and Task. This is because the previous tasks (Tasks, Constraint, TasksPlanner) are not holding the right attributes or missing the needed objects, such as Pet.
 ---
 
@@ -83,12 +84,27 @@ Based on the AI agend examination result, I decided to add some new classes such
 **a. Constraints and priorities**
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
+
+The scheduler in pawpal_system.py considers three constraints:
+
+* Availability — Constraint.get_available_slots() filters out any TimeSlot where available=False before scheduling begins. Busy windows (commute, meetings) are never assigned a task.
+
+* Priority — Tasks.get_tasks_by_priority() sorts tasks by priority integer (1 = highest) before they're paired with slots. Lower-priority tasks only get a slot after all higher-priority ones are placed.
+
+* Time-of-day preference — the secondary sort key maps due_time strings ("morning", "afternoon", "evening", "anytime") to a numeric order, so same-priority tasks are further ordered by when they should ideally happen.
+
+Due date (task.due_date) is visible in output but not yet used as a sort/filter constraint — tasks for tomorrow can appear in today's schedule if they're in the task list.
+
 - How did you decide which constraints mattered most?
+
+Availability is non-negotiable — the owner simply cannot act during a busy slot, so it's enforced by exclusion before any ranking happens. Priority comes next because pet care tasks have real health consequences: feeding is P1 because a missed meal affects the animal directly, walking is P2 because it's important but flexible, grooming is P3 because skipping one session is harmless. Time-of-day preference is last because it's advisory — a feed task ideally happens in the morning, but if the only open slot is at noon it's still better than nothing. That ordering (hard constraint → health priority → soft preference) reflects how a real pet owner would make the same call.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+
+schedule() in pawpal_system.py:212 uses a single zip pass — it pairs the highest-priority task with the earliest available slot, the second task with the second slot, and so on. It never backtracks or tries alternate slot combinations. If a P1 feed task is due in the morning but the first available slot is at 18:00, it still gets assigned there.
 
 ---
 
