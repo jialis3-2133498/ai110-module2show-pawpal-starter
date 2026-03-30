@@ -71,3 +71,36 @@ Two layers of conflict detection run before the schedule prints, neither of whic
 - **`TasksPlanner.get_conflicts(plan)`** — checks the final scheduled plan for any two tasks assigned to the same slot. Accepts a pre-built plan to avoid running the scheduling algorithm twice.
 
 Warnings are printed above the schedule with a `⚠` prefix so the owner sees the issue immediately while still getting a usable plan.
+
+## Testing PawPal+
+
+### Running the tests
+
+```bash
+python -m pytest tests/test_pawpal.py -v
+```
+
+If pytest is not installed, run the test file directly:
+
+```bash
+python tests/test_pawpal.py
+```
+
+### What the tests cover
+
+| Area | Tests | What is verified |
+|---|---|---|
+| **Task completion** | `test_mark_complete_changes_status` | `completed` flips from `False` to `True` after `mark_complete()` |
+| **Task addition** | `test_feed_pet_increases_task_count` | Adding feed, walk, and groom tasks grows `task_list` to 3 |
+| **Sorting — priority** | `test_get_tasks_by_priority_returns_chronological_order` | Tasks added out of order are returned P1 → P2 → P3 |
+| **Sorting — tie-breaking** | `test_get_tasks_by_priority_sorts_by_due_time_within_same_priority` | Same-priority tasks sort `morning` before `evening` |
+| **Recurrence — daily** | `test_complete_daily_task_creates_next_day_task` | Completing a daily task spawns a new task due the next day with all fields preserved |
+| **Recurrence — none** | `test_complete_non_recurring_task_returns_none` | Completing a one-off task returns `None` and does not grow the task list |
+| **Conflict detection — overlap** | `test_get_conflicts_flags_overlapping_slots` | Slots `09:00–10:00` and `09:30–10:30` produce exactly one conflict warning |
+| **Conflict detection — adjacent** | `test_get_conflicts_does_not_flag_adjacent_slots` | Slots `08:00–09:00` and `09:00–10:00` produce zero conflict warnings (boundary condition) |
+
+### Confidence Level
+
+**★★★★☆ (4/5)**
+
+The core scheduling behaviors — priority sorting, recurring task generation, and conflict detection — are tested against both the happy path and key edge cases (tie-breaking, adjacent boundaries, one-off vs. recurring). The main gap is end-to-end coverage of `TasksPlanner.schedule()` and the Streamlit UI layer, which remain untested. Confidence in the Python logic is high; confidence in the full integrated system is moderate until those layers have coverage.
