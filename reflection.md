@@ -23,52 +23,67 @@ classDiagram
         +String name
         +String breed
         +int age
+        +__str__() String
     }
 
     class TimeSlot {
         +String start
         +String end
         +bool available
+        +__str__() String
     }
 
     class Task {
-        +String taskType
+        +String task_type
         +Pet pet
         +int priority
-        +String dueTime
+        +String due_time
+        +bool completed
+        +String recurrence
+        +date due_date
+        +mark_complete()
+        +__str__() String
     }
 
     class Tasks {
-        +int numPets
+        +int num_pets
         +List~Pet~ pets
-        +List~Task~ taskList
-        +walkPet(pet)
-        +feedPet(pet)
-        +groomPet(pet)
+        +List~Task~ task_list
+        +walk_pet(pet) Task
+        +feed_pet(pet) Task
+        +groom_pet(pet) Task
+        +complete_task(task) Task
+        +get_tasks_for_pet(pet) List~Task~
+        +filter_tasks(pet_name, completed) List~Task~
+        +get_tasks_by_priority() List~Task~
     }
 
     class Constraint {
-        +String ownerName
-        +List~TimeSlot~ timeSlots
-        +getSchedule()
-        +getName()
-        +toString()
+        +String owner_name
+        +List~TimeSlot~ time_slots
+        +get_schedule() List~TimeSlot~
+        +get_available_slots() List~TimeSlot~
+        +get_name() String
+        +get_conflicts() List~String~
+        +__str__() String
     }
 
     class TasksPlanner {
         +Tasks tasks
         +Constraint constraint
-        +Dict taskReasons
-        +explainTask(task)
-        +schedule()
+        +Dict task_reasons
+        +schedule() List~Tuple~
+        +get_conflicts(plan) List~String~
+        +explain_task(task) String
+        +print_plan()
     }
 
     Task --> Pet : belongs to
     Tasks --> Pet : contains
     Tasks --> Task : contains
     Constraint --> TimeSlot : contains
-    TasksPlanner --> Tasks : instantiates
-    TasksPlanner --> Constraint : instantiates
+    TasksPlanner --> Tasks : uses
+    TasksPlanner --> Constraint : uses
 ```
 
 **b. Design changes**
