@@ -153,7 +153,7 @@ class Constraint:
         """Return the owner's name."""
         return self.owner_name
 
-    def get_conflicts(self) -> list[str]:
+    def get_slot_overlaps(self) -> list[str]:
         """Return warning strings for any overlapping available time slots.
 
         Slots are compared by HH:MM strings, which sort correctly lexicographically.
@@ -182,14 +182,14 @@ class TasksPlanner:
     constraint: Constraint
     task_reasons: dict[str, str] = field(default_factory=dict)
 
-    def get_conflicts(self, plan: list[tuple[Task, TimeSlot]] | None = None) -> list[str]:
+    def get_schedule_conflicts(self, plan: list[tuple[Task, TimeSlot]] | None = None) -> list[str]:
         """Return warning strings for any two tasks assigned to the same time slot.
 
         Also surfaces overlapping slot definitions from the Constraint.
         Accepts a pre-built plan to avoid calling schedule() a second time.
         Returns an empty list when no conflicts are found.
         """
-        warnings = list(self.constraint.get_conflicts())
+        warnings = list(self.constraint.get_slot_overlaps())
 
         if plan is None:
             plan = self.schedule()
@@ -235,7 +235,7 @@ class TasksPlanner:
         before the schedule so the owner sees them immediately.
         """
         plan = self.schedule()
-        conflicts = self.get_conflicts(plan)
+        conflicts = self.get_schedule_conflicts(plan)
         if conflicts:
             print("\n⚠  Scheduling Conflicts Detected:")
             for warning in conflicts:

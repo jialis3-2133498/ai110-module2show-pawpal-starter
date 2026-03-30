@@ -96,28 +96,28 @@ def test_complete_non_recurring_task_returns_none():
 
 
 # --- Test 5: Conflict Detection ---
-def test_get_conflicts_flags_overlapping_slots():
+def test_get_slot_overlaps_flags_overlapping_slots():
     overlapping_slots = [
         TimeSlot(start="09:00", end="10:00", available=True),
         TimeSlot(start="09:30", end="10:30", available=True),  # overlaps with above
     ]
     constraint = Constraint(owner_name="Alex", time_slots=overlapping_slots)
 
-    conflicts = constraint.get_conflicts()
+    conflicts = constraint.get_slot_overlaps()
 
     assert len(conflicts) == 1, "One conflict should be detected for overlapping slots."
     assert "09:00" in conflicts[0] and "09:30" in conflicts[0], \
         "Conflict message should reference both overlapping slot start times."
 
 
-def test_get_conflicts_does_not_flag_adjacent_slots():
+def test_get_slot_overlaps_does_not_flag_adjacent_slots():
     adjacent_slots = [
         TimeSlot(start="08:00", end="09:00", available=True),
         TimeSlot(start="09:00", end="10:00", available=True),  # starts exactly when previous ends
     ]
     constraint = Constraint(owner_name="Alex", time_slots=adjacent_slots)
 
-    conflicts = constraint.get_conflicts()
+    conflicts = constraint.get_slot_overlaps()
 
     assert len(conflicts) == 0, "Adjacent (non-overlapping) slots should not be flagged as conflicts."
 
@@ -141,8 +141,8 @@ if __name__ == "__main__":
     test_complete_non_recurring_task_returns_none()
     print("PASSED: test_complete_non_recurring_task_returns_none")
 
-    test_get_conflicts_flags_overlapping_slots()
-    print("PASSED: test_get_conflicts_flags_overlapping_slots")
+    test_get_slot_overlaps_flags_overlapping_slots()
+    print("PASSED: test_get_slot_overlaps_flags_overlapping_slots")
 
-    test_get_conflicts_does_not_flag_adjacent_slots()
-    print("PASSED: test_get_conflicts_does_not_flag_adjacent_slots")
+    test_get_slot_overlaps_does_not_flag_adjacent_slots()
+    print("PASSED: test_get_slot_overlaps_does_not_flag_adjacent_slots")

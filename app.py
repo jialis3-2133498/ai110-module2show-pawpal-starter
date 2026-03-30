@@ -38,7 +38,7 @@ if st.session_state.owner:
         st.table([{"Start": s.start, "End": s.end} for s in available_slots])
 
     # Surface any overlapping slot conflicts immediately
-    slot_conflicts = owner.get_conflicts()
+    slot_conflicts = owner.get_slot_overlaps()
     for conflict in slot_conflicts:
         st.warning(f"⚠ Slot conflict: {conflict}")
 
