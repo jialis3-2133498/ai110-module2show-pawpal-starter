@@ -110,3 +110,8 @@ python tests/test_pawpal.py
 **★★★★☆ (4/5)**
 
 The core scheduling behaviors — priority sorting, recurring task generation, and conflict detection — are tested against both the happy path and key edge cases (tie-breaking, adjacent boundaries, one-off vs. recurring). The main gap is end-to-end coverage of `TasksPlanner.schedule()` and the Streamlit UI layer, which remain untested. Confidence in the Python logic is high; confidence in the full integrated system is moderate until those layers have coverage.
+
+### Demo
+<a href="Demo1.png" target="_blank"><img src='Demo1.png' title='PawPal App Screenshot 1' width='' alt='PawPal App' class='center-block' /></a>
+
+<a href="Demo2.png" target="_blank"><img src='Demo2.png' title='PawPal App Screenshot 2' width='' alt='PawPal App' class='center-block' /></a>
